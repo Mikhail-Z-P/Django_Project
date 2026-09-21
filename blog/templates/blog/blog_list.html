@@ -1,0 +1,23 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<h1>Блог</h1>
+
+{% if posts %}
+    {% for post in posts %}
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+            <h2>{{ post.title }}</h2>
+            <p><small>Дата: {{ post.created_at|date:"d.m.Y" }} | Просмотров: {{ post.views }}</small></p>
+            
+            {% if post.preview_image %}
+                <img src="{{ post.preview_image.url }}" alt="{{ post.title }}" style="max-width: 200px; height: auto;">
+            {% endif %}
+            
+            <p>{{ post.content|truncatechars:150 }}</p>
+            <a href="{% url 'blog_detail' post.pk %}">Читать далее &rarr;</a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>Пока нет опубликованных статей.</p>
+{% endif %}
+{% endblock %}
