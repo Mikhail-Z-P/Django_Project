@@ -6,5 +6,5 @@ from .models import User
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username', 'phone', 'country', 'is_staff')
-    search_fields = ('email', 'username')
+    list_display = ("email", "username", "phone", "country", "is_staff")
+    search_fields = ("email", "username")
