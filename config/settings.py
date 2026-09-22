@@ -156,8 +156,5 @@ FORBIDDEN_WORDS = [
 
 AUTH_USER_MODEL = 'users.User'
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
+LOGIN_URL = 'users:login'
+
