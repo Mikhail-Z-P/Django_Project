@@ -1,0 +1,12 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<h1>Удалить статью?</h1>
+<p>Вы уверены, что хотите удалить статью «{{ post.title }}»? Это действие нельзя отменить.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" style="background-color: red; color: white;">Да, удалить</button>
+    <a href="{% url 'blog_detail' post.pk %}">Отмена</a>
+</form>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<a href="{% url 'blog_list' %}">&larr; Назад к списку</a>
+<hr>
+
+<h1>{{ post.title }}</h1>
+<p><small>Опубликовано: {{ post.created_at|date:"d.m.Y H:i" }} | Просмотров: {{ post.views }}</small></p>
+
+{% if post.preview_image %}
+    <img src="{{ post.preview_image.url }}" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+{% endif %}
+
+<div style="margin-top: 20px;">
+    {{ post.content|linebreaks }}
+</div>
+
+<hr>
+<a href="{% url 'blog_update' post.pk %}" style="margin-right: 10px;">Редактировать</a>
+<a href="{% url 'blog_delete' post.pk %}" style="color: red;">Удалить</a>
+{% endblock %}
