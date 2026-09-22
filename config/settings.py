@@ -140,3 +140,15 @@ MAILERS = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+FORBIDDEN_WORDS = [
+    'казино',
+    'криптовалюта',
+    'крипта',
+    'биржа',
+    'дешево',
+    'бесплатно',
+    'обман',
+    'полиция',
+    'радар',
+]
