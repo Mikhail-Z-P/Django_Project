@@ -14,6 +14,7 @@ FORBIDDEN_WORDS = [
     'радар',
 ]
 
+
 class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,4 +59,3 @@ class ProductForm(forms.ModelForm):
                 'Цена не может быть отрицательной.'
             )
         return price
-
