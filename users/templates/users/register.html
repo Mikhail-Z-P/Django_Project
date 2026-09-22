@@ -1,0 +1,22 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<h1>Регистрация</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div style="color: red;">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Зарегистрироваться</button>
+    <a href="{% url 'users:login' %}">Уже есть аккаунт? Войти</a>
+</form>
+{% endblock %}

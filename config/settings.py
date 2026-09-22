@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "catalog",
-    'blog',
+    "blog",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -140,3 +141,19 @@ MAILERS = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+FORBIDDEN_WORDS = [
+    "казино",
+    "криптовалюта",
+    "крипта",
+    "биржа",
+    "дешево",
+    "бесплатно",
+    "обман",
+    "полиция",
+    "радар",
+]
+
+AUTH_USER_MODEL = "users.User"
+
+LOGIN_URL = "users:login"
