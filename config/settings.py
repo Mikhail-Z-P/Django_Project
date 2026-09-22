@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "catalog",
     'blog',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,11 @@ FORBIDDEN_WORDS = [
     'полиция',
     'радар',
 ]
+
+AUTH_USER_MODEL = 'users.User'
+
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.console.EmailBackend",
+    },
+}
