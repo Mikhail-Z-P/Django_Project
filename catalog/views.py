@@ -14,7 +14,12 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-
+from .services import (
+    get_product_by_pk,
+    invalidate_product_cache,
+    get_products_by_category,
+    get_published_products,
+)
 from .forms import ProductForm
 from .models import Product
 
@@ -30,12 +35,13 @@ class HomeView(ListView):
     context_object_name = "products"
 
     def get_queryset(self):
-        """Возвращает queryset с фильтрацией по статусу публикации."""
-        queryset = super().get_queryset()
+        """Возвращает кешированный список опубликованных продуктов
+        или полный queryset для модераторов.
+        """
         user = self.request.user
         if user.is_authenticated and user.has_perm("catalog.can_unpublish_product"):
-            return queryset
-        return queryset.filter(is_published=True)
+            return Product.objects.all()
+        return get_published_products()
 
 
 class ContactsView(TemplateView):
@@ -50,6 +56,11 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = "catalog/product_detail.html"
     context_object_name = "product"
+
+    def get_object(self, queryset=None):
+        """Возвращает продукт через сервис с кешированием по pk."""
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        return get_product_by_pk(pk)
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -84,6 +95,12 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         user = self.request.user
         return product.owner == user or user.has_perm("catalog.can_unpublish_product")
 
+    def form_valid(self, form):
+        """Сохраняет продукт и сбрасывает его кеш."""
+        response = super().form_valid(form)
+        invalidate_product_cache(self.object.pk)
+        return response
+
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Удаление продукта."""
@@ -100,6 +117,13 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         user = self.request.user
         return product.owner == user or user.has_perm("catalog.delete_product")
 
+    def form_valid(self, form):
+        """Удаляет продукт и сбрасывает его кеш."""
+        pk = self.object.pk
+        response = super().form_valid(form)
+        invalidate_product_cache(pk)
+        return response
+
 
 class ProductUnpublishView(PermissionRequiredMixin, View):
     """Снятие продукта с публикации."""
@@ -113,4 +137,17 @@ class ProductUnpublishView(PermissionRequiredMixin, View):
         product = get_object_or_404(Product, pk=pk)
         product.is_published = False
         product.save()
+        invalidate_product_cache(pk)
         return redirect("catalog:home")
+
+
+class CategoryProductsView(ListView):
+    """Отображает список продуктов в указанной категории."""
+
+    template_name = "catalog/category_products.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        """Возвращает продукты через сервис с кешированием по category_id."""
+        category_id = self.kwargs.get("category_id")
+        return get_products_by_category(category_id)

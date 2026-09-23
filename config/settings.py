@@ -157,3 +157,10 @@ FORBIDDEN_WORDS = [
 AUTH_USER_MODEL = "users.User"
 
 LOGIN_URL = "users:login"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
+}
