@@ -3,14 +3,22 @@
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-<div class="product-detail">
-    <a href="{% url 'home' %}">&larr; Назад к каталогу</a>
-    <h1>{{ product.name }}</h1>
-    {% if product.image %}
-    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="400">
+<h1>{{ product.name }}</h1>
+<p>Цена: {{ product.price }} ₽</p>
+<p>{{ product.description }}</p>
+<p>Владелец: {{ product.owner|default:"Не указан" }}</p>
+
+{% if user.is_authenticated %}
+  <div class="product-actions">
+    {% if product.owner == user or perms.catalog.can_unpublish_product %}
+      <a href="{% url 'catalog:product_update' product.pk %}">Редактировать</a>
     {% endif %}
-    <p><strong>Категория:</strong> {{ product.category.name }}</p>
-    <p><strong>Описание:</strong> {{ product.description }}</p>
-    <p><strong>Цена:</strong> {{ product.price }} ₽</p>
-</div>
+
+    {% if product.owner == user or perms.catalog.delete_product %}
+      <a href="{% url 'catalog:product_delete' product.pk %}">Удалить</a>
+    {% endif %}
+  </div>
+{% endif %}
+
+<a href="{% url 'catalog:home' %}">Назад к списку</a>
 {% endblock %}
