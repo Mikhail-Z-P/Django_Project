@@ -14,7 +14,7 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-
+from services import  get_product_by_pk, invalidate_product_cache
 from .forms import ProductForm
 from .models import Product
 
@@ -51,6 +51,11 @@ class ProductDetailView(DetailView):
     template_name = "catalog/product_detail.html"
     context_object_name = "product"
 
+    def get_object(self, queryset=None):
+        """Возвращает продукт через сервис с кешированием по pk."""
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        return get_product_by_pk(pk)
+
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     """Создание нового продукта."""
@@ -84,6 +89,13 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         user = self.request.user
         return product.owner == user or user.has_perm("catalog.can_unpublish_product")
 
+    def form_valid(self, form):
+        """Сохраняет продукт и сбрасывает его кеш."""
+        response = super().form_valid(form)
+        invalidate_product_cache(self.object.pk)
+        return response
+
+
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Удаление продукта."""
@@ -100,6 +112,14 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         user = self.request.user
         return product.owner == user or user.has_perm("catalog.delete_product")
 
+    def form_valid(self, form):
+        """Удаляет продукт и сбрасывает его кеш."""
+        pk = self.object.pk
+        response = super().form_valid(form)
+        invalidate_product_cache(pk)
+        return response
+
+
 
 class ProductUnpublishView(PermissionRequiredMixin, View):
     """Снятие продукта с публикации."""
@@ -113,4 +133,5 @@ class ProductUnpublishView(PermissionRequiredMixin, View):
         product = get_object_or_404(Product, pk=pk)
         product.is_published = False
         product.save()
+        invalidate_product_cache(pk)
         return redirect("catalog:home")

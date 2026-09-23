@@ -157,3 +157,10 @@ FORBIDDEN_WORDS = [
 AUTH_USER_MODEL = "users.User"
 
 LOGIN_URL = "users:login"
+
+CACHES = {
+    'defolt': {
+        "BACKEND": 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
