@@ -29,10 +29,18 @@ class Product(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name="дата последнего изменения"
     )
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name="Опубликовано", )
 
     class Meta:
+        permissions = [
+            ("can_unpublish_product", "Может отменить публикацию продукта"),
+        ]
         verbose_name = "продукт"
         verbose_name_plural = "продукты"
 
     def __str__(self):
         return self.name
+
+
