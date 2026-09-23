@@ -1,0 +1,17 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Продукты категории{% endblock %}
+
+{% block content %}
+<h1>Продукты в категории</h1>
+
+{% for product in products %}
+  <div class="product-card">
+    <h3>{{ product.name }}</h3>
+    <p>Цена: {{ product.price }} ₽</p>
+    <p>{{ product.description }}</p>
+  </div>
+{% empty %}
+  <p>В этой категории пока нет продуктов.</p>
+{% endfor %}
+{% endblock %}

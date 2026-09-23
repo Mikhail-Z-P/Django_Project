@@ -14,7 +14,7 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-from services import  get_product_by_pk, invalidate_product_cache
+from services import  get_product_by_pk, invalidate_product_cache, get_products_by_category
 from .forms import ProductForm
 from .models import Product
 
@@ -135,3 +135,15 @@ class ProductUnpublishView(PermissionRequiredMixin, View):
         product.save()
         invalidate_product_cache(pk)
         return redirect("catalog:home")
+
+
+class CategoryProductsView(ListView):
+    """Отображает список продуктов в указанной категории."""
+
+    template_name = "catalog/category_products.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        """Возвращает продукты через сервис с кешированием по category_id."""
+        category_id = self.kwargs.get("category_id")
+        return get_products_by_category(category_id)
