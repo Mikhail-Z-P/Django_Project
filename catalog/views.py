@@ -1,8 +1,19 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  TemplateView, UpdateView, View)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+    View,
+)
 
 from .forms import ProductForm
 from .models import Product
@@ -51,7 +62,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         """Привязывает текущего пользователя как владельца продукта
-           перед сохранением формы.
+        перед сохранением формы.
         """
         form.instance.owner = self.request.user
         return super().form_valid(form)
@@ -67,7 +78,7 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         """Проверяет, что текущий пользователь — владелец продукта
-           или модератор. Возвращает True, если доступ разрешён.
+        или модератор. Возвращает True, если доступ разрешён.
         """
         product = self.get_object()
         user = self.request.user
@@ -83,7 +94,7 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         """Проверяет, что текущий пользователь — владелец продукта
-           или модератор с правом удаления. Возвращает True, если доступ разрешён.
+        или модератор с правом удаления. Возвращает True, если доступ разрешён.
         """
         product = self.get_object()
         user = self.request.user
@@ -97,7 +108,7 @@ class ProductUnpublishView(PermissionRequiredMixin, View):
 
     def post(self, request, pk):
         """Снимает продукт с публикации: находит продукт по pk,
-           устанавливает is_published=False и перенаправляет на главную.
+        устанавливает is_published=False и перенаправляет на главную.
         """
         product = get_object_or_404(Product, pk=pk)
         product.is_published = False

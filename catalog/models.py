@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="наименование")
     description = models.TextField(verbose_name="описание")
@@ -31,7 +32,8 @@ class Product(models.Model):
     )
     is_published = models.BooleanField(
         default=False,
-        verbose_name="Опубликовано", )
+        verbose_name="Опубликовано",
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -49,5 +51,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-
