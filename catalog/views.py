@@ -14,7 +14,12 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-from services import  get_product_by_pk, invalidate_product_cache, get_products_by_category
+from .services import (
+    get_product_by_pk,
+    invalidate_product_cache,
+    get_products_by_category,
+    get_published_products,
+)
 from .forms import ProductForm
 from .models import Product
 
@@ -30,12 +35,13 @@ class HomeView(ListView):
     context_object_name = "products"
 
     def get_queryset(self):
-        """Возвращает queryset с фильтрацией по статусу публикации."""
-        queryset = super().get_queryset()
+        """Возвращает кешированный список опубликованных продуктов
+        или полный queryset для модераторов.
+        """
         user = self.request.user
         if user.is_authenticated and user.has_perm("catalog.can_unpublish_product"):
-            return queryset
-        return queryset.filter(is_published=True)
+            return Product.objects.all()
+        return get_published_products()
 
 
 class ContactsView(TemplateView):
@@ -96,7 +102,6 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return response
 
 
-
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Удаление продукта."""
 
@@ -118,7 +123,6 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         response = super().form_valid(form)
         invalidate_product_cache(pk)
         return response
-
 
 
 class ProductUnpublishView(PermissionRequiredMixin, View):
