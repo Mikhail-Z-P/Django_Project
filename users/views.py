@@ -39,10 +39,10 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        return reverse_lazy("home")
+        return reverse_lazy("catalog:home")
 
 
 def logout_view(request):
     """Выход из аккаунта."""
     logout(request)
-    return redirect("home")
+    return redirect("catalog:home")

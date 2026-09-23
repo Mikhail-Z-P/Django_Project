@@ -1,6 +1,6 @@
 <nav class="navbar">
-    <a href="{% url 'home' %}">Главная</a>
-    <a href="{% url 'product_create' %}">Добавить товар</a>
+    <a href="{% url 'catalog:home' %}">Главная</a>
+    <a href="{% url 'catalog:product_create' %}">Добавить товар</a>
 {% if user.is_authenticated %}
     <span>{{ user.email }}</span>
     <a href="{% url 'users:logout' %}">Выйти</a>

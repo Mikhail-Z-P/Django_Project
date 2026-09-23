@@ -9,6 +9,6 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Сохранить</button>
-    <a href="{% url 'home' %}">тмена</a>
+    <a href="{% url 'catalog:home' %}">тмена</a>
 </form>
 {% endblock %}
